@@ -1,794 +1,465 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI with Roy | Resources for Aspiring AI Engineers</title>
+    <title>Understanding Language Models (NLP)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
-
-    <script src="https://preline.co/assets/vendor/preline/dist/index.js?v=2.5.0"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        section {
-            padding-top: 100px !important;
-            padding-bottom: 100px !important;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .slide-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            min-height: 450px; /* Adjusted min height as images are removed */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide {
+            display: none; 
+            animation: fadeIn 0.5s;
+        }
+        .slide.active {
+            display: block; 
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1, h2, h3 {
+            color: #1e40af; 
+        }
+        h1 { font-size: 2.25rem; margin-bottom: 1rem; text-align: center; }
+        h2 { font-size: 1.75rem; margin-bottom: 0.75rem; margin-top: 1.5rem; }
+        h3 { font-size: 1.25rem; margin-bottom: 0.5rem; margin-top: 1rem; color: #1d4ed8; }
+        p, ul, ol {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+        ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+        strong, b {
+            font-weight: 600; /* Tailwind's font-semibold equivalent */
+        }
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .nav-button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .nav-button:hover {
+            background-color: #1d4ed8;
+        }
+        .nav-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .slide-counter {
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        .analogy-toggle {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+        .analogy-content {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+        .chapter-title-slide h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .note-section {
+            background-color: #fef9c3; /* Light yellow */
+            color: #713f12; /* Brown text */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border-left: 4px solid #facc15; /* Yellow accent */
+            display: flex;
+            align-items: flex-start; /* Align icon and text nicely */
+        }
+        .note-section svg {
+            flex-shrink: 0; /* Prevent icon from shrinking */
+            margin-right: 0.75rem; /* Space between icon and text */
+            width: 24px;
+            height: 24px;
+            fill: #f59e0b; /* Amber color for bulb */
         }
 
-        @media (max-width: 1024px) {
-            section {
-                padding-top: 64px !important;
-                padding-bottom: 64px !important;
-            }
-        }
-
+        /* Responsive adjustments */
         @media (max-width: 640px) {
-            section {
-                padding-top: 40px !important;
-                padding-bottom: 40px !important;
-            }
+            body { padding: 0.5rem; }
+            .slide-container { padding: 1rem; min-height: auto; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.1rem; }
+            p, ul, ol { font-size: 0.9rem; }
+            .nav-controls { flex-direction: column; gap: 0.5rem; }
+            .nav-button { width: 100%; }
         }
     </style>
-    <script>
-        console.log('DOMContentLoaded');
-        
-        // Function to handle image loading errors
-        function handleImageError(img) {
-            const width = img.getAttribute('width') || img.clientWidth || 300;
-            const height = img.getAttribute('height') || img.clientHeight || 200;
-            img.src = "https://placehold.co/" + width + "x" + height;
-            img.alt = 'Placeholder image';
-        }
-
-        // Function to process an image
-        function processImage(img) {
-            console.log('New image found:', img.src);
-            img.addEventListener('error', () => handleImageError(img));
-        }
-
-        // Function to observe DOM changes and attach error handlers to new images
-        function observeImages() {
-            // Create a MutationObserver instance
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    // Check added nodes for images
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            if (node.nodeName === 'IMG') {
-                                processImage(node);
-                            }
-                            
-                            // Also check for images within added nodes
-                            const images = node.getElementsByTagName('img');
-                            Array.from(images).forEach(processImage);
-                        }
-                    });
-                });
-            });
-
-            // Start observing the document with the configured parameters
-            const config = { childList: true, subtree: true };
-            observer.observe(document.body, config);
-
-            // Also handle existing images
-            const existingImages = document.getElementsByTagName('img');
-            Array.from(existingImages).forEach(processImage);
-        }
-
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', observeImages);
-        } else {
-            observeImages();
-        }
-    </script>
 </head>
+<body>
 
-<body class=" leading-normal"> <element id="682b0986-3e77-4bd2-a122-d150b21f510b" data-section-id="682b0986-3e77-4bd2-a122-d150b21f510b">
+    <h1>Understanding Language Models (NLP)</h1>
 
-<htmlCode>
-<div id="root">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <div class="slide-container">
+        </div>
+
+    <div class="nav-controls">
+        <button id="prevBtn" class="nav-button">Previous</button>
+        <span id="slideCounter" class="slide-counter">Slide 1 / N</span>
+        <button id="nextBtn" class="nav-button">Next</button>
+    </div>
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
-                        },
-                    },
-                },
+        // SVG Bulb Icon
+        const bulbIconSvg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm0-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 10c-1.33 0-4 .67-4 2h8c0-1.33-2.67-2-4-2zm0-2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM9 19h6v-1.08c0-.7-.56-1.25-1.29-1.09-.47.11-.93.17-1.39.17s-.92-.06-1.39-.17C10.15 16.67 9 17.22 9 17.92V19zm3-14.5c-1.93 0-3.5 1.57-3.5 3.5S10.07 11.5 12 11.5s3.5-1.57 3.5-3.5S13.93 4.5 12 4.5z"/>
+                <path d="M12,2A7,7,0,0,0,5,9c0,2.38,1.19,4.47,3,5.74V17a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1v-2.26c1.81-1.27,3-3.36,3-5.74A7,7,0,0,0,12,2Zm1,15H11v-1h2Zm0-3H11V12h2ZM12,6a3,3,0,1,1-3,3A3,3,0,0,1,12,6Z"/>
+            </svg>
+        `; // A more distinct bulb icon
+
+        const slidesContent = [
+            // Introduction Slide
+            {
+                title: "Welcome!",
+                content: `
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-blue-700 mb-6">Journey into Language Models</h2>
+                        <p class="text-lg text-gray-700 mb-4">This presentation will guide you through the fascinating world of <strong>Language Models</strong>, from the basics to the advanced concepts that power today's AI.</p>
+                        <p class="text-lg text-gray-700">We'll use <strong>simple terms</strong> and <strong>analogies</strong> to make complex ideas easy to understand. Let's begin!</p>
+                    </div>
+                `
             },
+            // Chapter 1: What is an LLM?
+            {
+                title: "Chapter 1: What is an LLM?",
+                isChapterTitle: true,
+                content: `<h2 class="text-center">Chapter 1: What is a <strong>Large Language Model (LLM)</strong>?</h2>`
+            },
+            {
+                title: "LLM: Super-Smart Autocomplete",
+                content: `
+                    <h3>LLM: A <strong>Super-Smart Autocomplete</strong></h3>
+                    <p>Imagine you're texting and your phone suggests the next word. An LLM is like that, but on a <strong>massive scale</strong>.</p>
+                    <p>It's an incredibly well-read system, trained on <strong>trillions of words</strong> from books, articles, websites, and conversations. This vast amount of text is far more than any single human could ever read!</p>
+                    <p><strong>Example:</strong> If you type "The weather today is...", an LLM might predict "...sunny and warm." or "...cloudy with a chance of rain." based on patterns it learned.</p>
+                `
+            },
+            {
+                title: "LLM: Learning from Text",
+                content: `
+                    <h3>How LLMs Learn Patterns</h3>
+                    <p>Because it has "read" so much, an LLM learns:</p>
+                    <ul>
+                        <li>Patterns of how <strong>words fit together</strong>.</li>
+                        <li>How <strong>sentences are formed</strong> (grammar and syntax).</li>
+                        <li>How different <strong>ideas and concepts relate</strong> to each other.</li>
+                    </ul>
+                    <p>It's like someone who has read every book in the world's biggest library and remembers not just the stories, but how language is used to tell them.</p>
+                    <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> LLMs don't "understand" in a human sense. They are exceptionally good at recognizing and reproducing <strong>statistical patterns</strong> in the data they were trained on.</div>
+                    </div>
+                `
+            },
+            {
+                title: "LLM: Capabilities",
+                content: `
+                    <h3>What Can This "Super-Smart Autocomplete" Do?</h3>
+                    <ul>
+                        <li><strong>Predict the next word/sentence:</strong> Far more sophisticated than basic autocomplete.</li>
+                        <li><strong>Understand your questions:</strong> Processes queries in plain English (or other languages).</li>
+                        <li><strong>Generate text:</strong> Can write emails, summaries, stories, poems, and even computer code. <em>For example, you could ask it to "Write a short poem about a cat."</em></li>
+                        <li><strong>Translate languages:</strong> By learning patterns in multiple languages.</li>
+                        <li><strong>Answer questions:</strong> Uses its vast knowledge from training data.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "LLM: Analogy",
+                content: `
+                    <h3>Analogy: The <strong>Master Chef</strong></h3>
+                    <div class="analogy-toggle" onclick="toggleAnalogy(this)" data-analogy-name="The Master Chef">Reveal: The Master Chef</div>
+                    <div class="analogy-content hidden">
+                        <p>Imagine a master chef who has studied every recipe, technique, and flavor combination. This chef has an incredible understanding of food.</p>
+                        <ul>
+                            <li>Ask "What usually goes well with chicken?" – they'll have tons of suggestions (like an LLM understanding <strong>word relationships</strong>).</li>
+                            <li>Say "I want to make a dessert that's sweet but also a bit tart" – they can come up with a recipe (like an LLM <strong>generating text</strong> based on a prompt).</li>
+                            <li>Give them a list of ingredients – they can tell you what you can make (like an LLM <strong>understanding input</strong> and providing relevant output).</li>
+                        </ul>
+                        <p>An LLM is like that master chef, but for language and information.</p>
+                    </div>
+                    <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> An LLM doesn't "think" or "feel" like a human chef. It's a powerful tool built on the <strong>patterns</strong> it learned from all that text. Its "creativity" is a result of sophisticated pattern matching and generation.</div>
+                    </div>
+                `
+            },
+            // Chapter 2: What is a Language Model?
+            {
+                title: "Chapter 2: What is a Language Model?",
+                isChapterTitle: true,
+                content: `<h2 class="text-center">Chapter 2: What is a <strong>Language Model</strong>?</h2>`
+            },
+            {
+                title: "Language Model: The Rulebook",
+                content: `
+                    <h3>The <strong>Rulebook</strong> or <strong>Probability Guide</strong> for Language</h3>
+                    <p>Before LLMs, we had the basic "Language Model." Its main job is to figure out <strong>how likely a sequence of words is to occur</strong>.</p>
+                    <p>Consider these sentences:</p>
+                    <ol>
+                        <li class="text-green-700 p-1 bg-green-100 rounded-md">"The fluffy cat sat on the mat." (<strong>High probability</strong>)</li>
+                        <li class="text-red-700 p-1 bg-red-100 rounded-md">"Sat mat cat fluffy on the the." (<strong>Low probability</strong>)</li>
+                    </ol>
+                    <p>A language model assigns a higher probability (a higher score) to the first sentence because it follows the <strong>common patterns and rules</strong> of English.</p>
+                `
+            },
+            {
+                title: "Language Model: How It Learns",
+                content: `
+                    <h3>How Does It Learn These "Rules"?</h3>
+                    <p>It learns them by looking at <strong>a lot of text</strong> (though typically less than an LLM). Even a simpler language model is trained on text data. By seeing many examples of correct sentences, it starts to understand:</p>
+                    <ul>
+                        <li>Which words tend to <strong>follow other words</strong> (e.g., "thank" is often followed by "you").</li>
+                        <li>Basic <strong>grammar</strong> (e.g., subjects usually come before verbs).</li>
+                        <li><strong>Common phrases</strong>.</li>
+                    </ul>
+                    <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> The "rules" aren't explicitly programmed. The model <strong>infers these statistical likelihoods</strong> from the data.</div>
+                    </div>
+                `
+            },
+            {
+                title: "Language Model: Analogy",
+                content: `
+                    <h3>Analogy: The <strong>Weather Forecaster for Words</strong></h3>
+                    <div class="analogy-toggle" onclick="toggleAnalogy(this)" data-analogy-name="Word Weather Forecaster">Reveal: Word Weather Forecaster</div>
+                    <div class="analogy-content hidden">
+                        <p>Think of a weather forecaster. They look at <strong>past weather patterns</strong> (historical data) to predict what the weather will be like tomorrow. They might say, "There's a 70% chance of rain."</p>
+                        <p>A language model is a bit like that, but for words:</p>
+                        <ul>
+                            <li>If it sees "The sky is blue and the sun is...", it can predict that the next word is likely to be "<strong>shining</strong>" with a high probability.</li>
+                            <li>If it sees "I am going to the...", it knows that "<strong>park</strong>," "<strong>store</strong>," or "<strong>movies</strong>" are more probable next words than, say, "<strong>purple</strong>."</li>
+                        </ul>
+                    </div>
+                    <p class="mt-4">So, a language model essentially gives us a way to <strong>quantify how "good" or "likely"</strong> a piece of text is.</p>
+                `
+            },
+            {
+                title: "Language Model: Applications",
+                content: `
+                    <h3>Applications of Language Models:</h3>
+                    <ul>
+                        <li><strong>Spell checkers:</strong> Suggest corrections by finding the most probable correct word in context. <em>Example: If you type "I went to the bech," it might suggest "beach."</em></li>
+                        <li><strong>Autocomplete:</strong> Your phone's keyboard uses a language model.</li>
+                        <li><strong>Machine translation:</strong> Understanding sentence probabilities in different languages helps translate more accurately.</li>
+                    </ul>
+                    <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> The "<strong>Large</strong>" in LLM simply means it's a language model that has been trained on an <strong>enormous amount of text</strong> and has a huge number of internal "parameters" (learned settings). This scale allows for much more nuanced understanding.</div>
+                    </div>
+                `
+            },
+            // Chapter 3: The Journey
+            {
+                title: "Chapter 3: The Journey of Understanding Words",
+                isChapterTitle: true,
+                content: `<h2 class="text-center">Chapter 3: The Journey of Understanding Words</h2><p class="text-center text-lg">From Simple Dictionaries to Storytellers</p>`
+            },
+            {
+                title: "Part 1: Word2Vec",
+                content: `
+                    <h3>Part 1: <strong>Word2Vec</strong> - Giving Words a Location in "Meaning Space"</h3>
+                    <p><strong>The Old Way:</strong> Computers saw words as just sequences of letters (e.g., "King" was K-I-N-G).</p>
+                    <p><strong>The Idea (Word2Vec):</strong> Give each word an "address" or <strong>coordinates</strong> in a giant "<strong>meaning space</strong>." Words with similar meanings are close together.</p>
+                    <p><strong>How it Worked:</strong> Learned these "addresses" by looking at which words tend to <strong>appear near each other</strong> in sentences. <em>Example: "Dog" often appears with "barked," "cat" with "meowed."</em></p>
+                    <p><strong>The Magic:</strong> It could even do "math" with words! For example, "King" - "Man" + "Woman" would result in coordinates very close to "Queen." This showed it captured <strong>semantic relationships</strong>.</p>
+                    <div class="analogy-toggle" onclick="toggleAnalogy(this)" data-analogy-name="The Constellation Mapper">Reveal: The Constellation Mapper</div>
+                    <div class="analogy-content hidden">
+                        <p>Imagine an astronomer mapping stars. Stars that are part of the same constellation (related) are grouped together. Word2Vec is like a constellation mapper for words, grouping them based on how they're used together.</p>
+                    </div>
+                    <p class="mt-2"><strong>Limitation:</strong> Great for individual word meanings, but didn't understand the <strong>order of words</strong> or sentence structure well.</p>
+                `
+            },
+            {
+                title: "Part 2: RNNs",
+                content: `
+                    <h3>Part 2: <strong>RNNs</strong> - Remembering the Story So Far</h3>
+                    <p><strong>The Challenge:</strong> Language isn't just a bag of words; it's a <strong>sequence</strong>. The order matters! ("I am happy" vs. "I am not happy").</p>
+                    <p><strong>The Idea (Recurrent Neural Networks - RNNs):</strong> Designed to <strong>remember what they've seen before</strong> in a sequence. As they process a sentence word by word, they keep a kind of "<strong>memory</strong>" of the previous words. This memory helps them understand context.</p>
+                    <p><strong>How it Worked:</strong> It has a loop. It processes a word, produces an output, and then feeds a summary of what it just processed back into itself to consider for the next word.</p>
+                    <div class="analogy-toggle" onclick="toggleAnalogy(this)" data-analogy-name="Choose-Your-Own-Adventure Book">Reveal: Choose-Your-Own-Adventure Book</div>
+                    <div class="analogy-content hidden">
+                        <p>In these books, what happens next depends on your previous choices. You have to remember the path you took. An RNN is like a reader who remembers the story so far to understand the current page.</p>
+                    </div>
+                    <p class="mt-2"><strong>Limitation:</strong> RNNs had a "<strong>short-term memory</strong>" problem. They struggled to remember important context from much earlier in a long sentence or paragraph.</p>
+                     <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> This memory issue is often called the "<strong>vanishing gradient problem</strong>," where the influence of earlier words diminishes too quickly as the sequence gets longer.</div>
+                    </div>
+                `
+            },
+            {
+                title: "Part 3: Transformers",
+                content: `
+                    <h3>Part 3: <strong>Transformers</strong> - Paying Attention to What Matters</h3>
+                    <p><strong>The Next Hurdle:</strong> RNNs' memory problem. How to understand long sentences and pay attention to important words, even if they are far apart?</p>
+                    <p><strong>The Idea (Transformers & "Attention"):</strong> Instead of processing words one by one, Transformers can look at <strong>all words in a sentence at the same time</strong>. A mechanism called "<strong>attention</strong>" figures out which words are most important to understand the meaning of any given word in that context.</p>
+                    <p><strong>How "Attention" Worked:</strong> For each word, it weighs the relevance of all other words in the sentence. <em>Example: In "The dog, which ran all day, was tired," for "tired," "attention" would highlight "dog" and "ran all day."</em></p>
+                    <p><strong>The Magic:</strong> Handles <strong>long-range dependencies</strong> (connections between distant words) much better. Also, can process many words in <strong>parallel</strong> (at the same time), making them much faster to train.</p>
+                    <div class="analogy-toggle" onclick="toggleAnalogy(this)" data-analogy-name="Expert Panel Discussion">Reveal: Expert Panel Discussion</div>
+                    <div class="analogy-content hidden">
+                        <p>Imagine a panel of experts (words). For any point, you can instantly ask all experts how their area relates. "Attention" is like a moderator highlighting which experts (other words) are most relevant to the current speaker (current word).</p>
+                    </div>
+                `
+            },
+            {
+                title: "The Journey's Impact",
+                content: `
+                    <h3>The Journey's Impact</h3>
+                    <p>This progression has been revolutionary:</p>
+                    <ol class="space-y-2 my-2">
+                        <li><strong>Word2Vec:</strong> Gave individual words rich meaning.</li>
+                        <li><strong>RNNs:</strong> Understood sequences and short-term context.</li>
+                        <li><strong>Transformers:</strong> Mastered long-range context with <strong>attention</strong> and enabled training on massive datasets due to <strong>parallel processing</strong>.</li>
+                    </ol>
+                    <div class="note-section">
+                        ${bulbIconSvg}
+                        <div><strong>Note:</strong> Transformers are the architectural foundation for most modern <strong>Large Language Models (LLMs)</strong> like GPT, BERT, and others. Their ability to scale and handle complex language patterns is key to their success.</div>
+                    </div>
+                `
+            },
+            // Conclusion Slide
+            {
+                title: "Thank You!",
+                content: `
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-blue-700 mb-6">You've Reached the End!</h2>
+                        <p class="text-lg text-gray-700 mb-4">Hopefully, this journey through language models has been insightful and easy to follow.</p>
+                        <p class="text-lg text-gray-700">These concepts are the <strong>building blocks</strong> for many amazing AI technologies we see today. Understanding them helps demystify how AI "understands" and generates language.</p>
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlideIndex = 0;
+        const slideContainer = document.querySelector('.slide-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterEl = document.getElementById('slideCounter');
+
+        function renderSlides() {
+            slideContainer.innerHTML = '';
+            slidesContent.forEach((slideData) => {
+                const slideEl = document.createElement('div');
+                slideEl.classList.add('slide');
+                if (slideData.isChapterTitle) {
+                    slideEl.classList.add('chapter-title-slide');
+                }
+                slideEl.innerHTML = slideData.content; 
+                slideContainer.appendChild(slideEl);
+            });
+            showSlide(currentSlideIndex);
         }
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            updateNavControls();
+            slideCounterEl.textContent = `Slide ${index + 1} / ${slides.length}`;
+        }
+
+        function updateNavControls() {
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slidesContent.length - 1;
+        }
+
+        function toggleAnalogy(element) {
+            const content = element.nextElementSibling;
+            if (!content || !content.classList) {
+                return;
+            }
+            const isHidden = content.classList.toggle('hidden'); 
+            const analogyName = element.dataset.analogyName || 'Analogy';
+            element.textContent = isHidden ? `Reveal: ${analogyName}` : `Hide: ${analogyName}`;
+        }
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSlideIndex < slidesContent.length - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', renderSlides);
     </script>
 
-    <header class="bg-primary-900 text-white">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold">AI with Roy</div>
-            <ul class="flex space-x-6">
-                <li><a href="#" class="hover:text-primary-300">Home</a></li>
-                <li><a href="#" class="hover:text-primary-300">Resources</a></li>
-                <li><a href="#" class="hover:text-primary-300">About</a></li>
-                <li><a href="#" class="hover:text-primary-300">Contact</a></li>
-            </ul>
-        </nav>
-
-        <div class="container mx-auto px-6 py-20 flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
-                <h1 class="text-4xl sm:text-7xl font-extrabold tracking-tight mb-4">Become an AI Engineer</h1>
-                <p class="text-xl mb-8">Join Roy on a journey to master AI engineering with curated resources and expert guidance.</p>
-                <a href="#" class="bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300">Get Started</a>
-            </div>
-            <div class="md:w-1/2 flex justify-center">
-                <div class="w-full max-w-md bg-primary-800 rounded-lg shadow-xl p-6">
-                    <h2 class="text-2xl font-bold mb-4">Latest Resources</h2>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-primary-300 hover:text-white">Introduction to Machine Learning</a></li>
-                        <li><a href="#" class="text-primary-300 hover:text-white">Deep Learning Fundamentals</a></li>
-                        <li><a href="#" class="text-primary-300 hover:text-white">Natural Language Processing</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </header>
-</div>
-</htmlCode></element><element id="3eda84cb-930f-4098-9f18-c3161a9b0975" data-section-id="3eda84cb-930f-4098-9f18-c3161a9b0975">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-gray-100 py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Featured AI Resources</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Machine Learning Basics</h3>
-                        <p class="text-gray-600 mb-4">Learn the fundamentals of machine learning algorithms and techniques.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Deep Learning with PyTorch</h3>
-                        <p class="text-gray-600 mb-4">Master deep learning concepts using the PyTorch framework.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Natural Language Processing</h3>
-                        <p class="text-gray-600 mb-4">Explore NLP techniques for understanding and generating human language.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Computer Vision Applications</h3>
-                        <p class="text-gray-600 mb-4">Discover AI applications in image and video processing.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Reinforcement Learning</h3>
-                        <p class="text-gray-600 mb-4">Learn how to train AI agents through interaction with environments.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">AI Ethics and Governance</h3>
-                        <p class="text-gray-600 mb-4">Explore the ethical considerations and governance of AI systems.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <a href="#" class="bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 hover:bg-primary-700">View All Resources</a>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="ec56358f-ce57-421a-9009-6c908a361d84" data-section-id="ec56358f-ce57-421a-9009-6c908a361d84">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-white py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">AI Learning Paths</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-primary-700">Beginner Path</h3>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Python Basics
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Intro to Machine Learning
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Data Preprocessing
-                        </li>
-                    </ul>
-                    <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Start Path</a>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-primary-700">Intermediate Path</h3>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Deep Learning Fundamentals
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Neural Networks with PyTorch
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Computer Vision Basics
-                        </li>
-                    </ul>
-                    <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Start Path</a>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-primary-700">Advanced Path</h3>
-                    <ul class="space-y-2 mb-6">
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Natural Language Processing
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Reinforcement Learning
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                            AI Ethics and Governance
-                        </li>
-                    </ul>
-                    <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Start Path</a>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <p class="text-lg text-gray-600 mb-4">Not sure where to start? Take our assessment to find your ideal path.</p>
-                <a href="#" class="inline-block bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 hover:bg-primary-700">Take Skill Assessment</a>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="15350db9-6a6a-457c-9370-419f24229fcd" data-section-id="15350db9-6a6a-457c-9370-419f24229fcd">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-gray-100 py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Essential AI Tools</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">TensorFlow</h3>
-                        <p class="text-gray-600 mb-4">Open-source library for machine learning and artificial intelligence.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">PyTorch</h3>
-                        <p class="text-gray-600 mb-4">Machine learning library for Python, used for applications such as computer vision and NLP.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Scikit-learn</h3>
-                        <p class="text-gray-600 mb-4">Machine learning library for Python, built on NumPy, SciPy, and matplotlib.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Keras</h3>
-                        <p class="text-gray-600 mb-4">High-level neural networks API, written in Python and capable of running on top of TensorFlow.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">OpenCV</h3>
-                        <p class="text-gray-600 mb-4">Open-source computer vision and machine learning software library.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">NLTK</h3>
-                        <p class="text-gray-600 mb-4">Leading platform for building Python programs to work with human language data.</p>
-                        <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Learn More →</a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <a href="#" class="bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 hover:bg-primary-700">Explore All Tools</a>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="fd9db6ce-1b27-48ba-a9da-ec0f35685053" data-section-id="fd9db6ce-1b27-48ba-a9da-ec0f35685053">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-white py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Latest from the Blog</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">The Future of AI in Healthcare</h3>
-                        <p class="text-gray-600 mb-4">Exploring how artificial intelligence is revolutionizing medical diagnosis and treatment.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">May 15, 2023</span>
-                            <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Mastering Neural Networks</h3>
-                        <p class="text-gray-600 mb-4">A comprehensive guide to understanding and implementing neural networks in your AI projects.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">May 10, 2023</span>
-                            <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Ethics in AI Development</h3>
-                        <p class="text-gray-600 mb-4">Discussing the importance of ethical considerations in artificial intelligence research and applications.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">May 5, 2023</span>
-                            <a href="#" class="text-primary-600 hover:text-primary-800 font-medium">Read More →</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <a href="#" class="inline-block bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 hover:bg-primary-700">View All Posts</a>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="f25a4891-588f-4c06-b1ad-4c57bfb1e427" data-section-id="f25a4891-588f-4c06-b1ad-4c57bfb1e427">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-gray-100 py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">What Our Students Say</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center text-primary-700 font-bold text-xl">
-                            JS
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-lg">John Smith</h4>
-                            <p class="text-gray-600">Data Scientist</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"AI with Roy's resources have been instrumental in my journey to becoming a proficient AI engineer. The structured learning paths and hands-on projects really accelerated my growth."</p>
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center text-primary-700 font-bold text-xl">
-                            EJ
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-lg">Emily Johnson</h4>
-                            <p class="text-gray-600">ML Engineer</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"The AI tools section on AI with Roy's website is a goldmine. It introduced me to cutting-edge technologies that I now use daily in my work as a machine learning engineer."</p>
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center text-primary-700 font-bold text-xl">
-                            MR
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-semibold text-lg">Michael Rodriguez</h4>
-                            <p class="text-gray-600">AI Researcher</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 mb-4">"The blog posts on AI ethics have been eye-opening. They've helped me approach my AI research with a more balanced and responsible perspective. Truly valuable content!"</p>
-                    <div class="flex text-yellow-400">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="1d193de8-8703-48fb-ba14-fe7d203befe2" data-section-id="1d193de8-8703-48fb-ba14-fe7d203befe2">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-white py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Featured Courses</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Introduction to Machine Learning</h3>
-                        <p class="text-gray-600 mb-4">Learn the fundamentals of machine learning algorithms and techniques.</p>
-                        <ul class="text-sm text-gray-600 mb-4">
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                10 hours of video content
-                            </li>
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                5 hands-on projects
-                            </li>
-                            <li class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                Certificate upon completion
-                            </li>
-                        </ul>
-                        <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Enroll Now</a>
-                    </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Deep Learning Masterclass</h3>
-                        <p class="text-gray-600 mb-4">Master deep learning concepts and neural networks with practical applications.</p>
-                        <ul class="text-sm text-gray-600 mb-4">
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                15 hours of video content
-                            </li>
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                8 advanced projects
-                            </li>
-                            <li class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                1-on-1 mentoring sessions
-                            </li>
-                        </ul>
-                        <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Enroll Now</a>
-                    </div>
-                </div>
-                <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2 text-primary-700">Natural Language Processing</h3>
-                        <p class="text-gray-600 mb-4">Dive into NLP techniques and build intelligent language models.</p>
-                        <ul class="text-sm text-gray-600 mb-4">
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                12 hours of video content
-                            </li>
-                            <li class="flex items-center mb-2">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                6 real-world NLP projects
-                            </li>
-                            <li class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
-                                Access to NLP tools and datasets
-                            </li>
-                        </ul>
-                        <a href="#" class="block text-center bg-primary-600 text-white font-semibold py-2 px-4 rounded hover:bg-primary-700 transition duration-300">Enroll Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <a href="#" class="inline-block bg-primary-600 text-white font-bold py-3 px-6 rounded-full text-lg transition duration-300 hover:bg-primary-700">View All Courses</a>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="5038b65f-1f51-4829-8ef6-8f08ed77e636" data-section-id="5038b65f-1f51-4829-8ef6-8f08ed77e636">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-gray-100 py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Join Our AI Community</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="bg-white rounded-lg shadow-md p-8">
-                    <h3 class="text-2xl font-semibold mb-4 text-primary-700">Connect with AI Enthusiasts</h3>
-                    <p class="text-gray-600 mb-6">Join our vibrant community of AI learners, professionals, and enthusiasts. Share knowledge, collaborate on projects, and grow together in the exciting field of artificial intelligence.</p>
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="text-gray-700">Engage in forum discussions</span>
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="text-gray-700">Participate in coding challenges</span>
-                        </li>
-                        <li class="flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="text-gray-700">Attend virtual meetups and webinars</span>
-                        </li>
-                    </ul>
-                    <a href="#" class="inline-block bg-primary-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-primary-700 transition duration-300">Join Community</a>
-                </div>
-                <div class="space-y-8">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h4 class="text-xl font-semibold mb-2 text-primary-700">Weekly AI Challenges</h4>
-                        <p class="text-gray-600">Test your skills with our weekly AI coding challenges. Solve real-world problems and compete with peers.</p>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h4 class="text-xl font-semibold mb-2 text-primary-700">Mentorship Program</h4>
-                        <p class="text-gray-600">Get guidance from experienced AI professionals. Our mentorship program connects you with industry experts.</p>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h4 class="text-xl font-semibold mb-2 text-primary-700">AI Project Collaboration</h4>
-                        <p class="text-gray-600">Find teammates for your AI projects or join existing ones. Collaborate and build impressive portfolio pieces.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-12">
-                <p class="text-gray-600 mb-4">Stay updated with our community activities and AI news</p>
-                <form class="max-w-md mx-auto">
-                    <div class="flex">
-                        <input type="email" placeholder="Enter your email" class="flex-grow px-4 py-2 rounded-l-full focus:outline-none focus:ring-2 focus:ring-primary-600">
-                        <button type="submit" class="bg-primary-600 text-white px-6 py-2 rounded-r-full hover:bg-primary-700 transition duration-300">Subscribe</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="c23d022b-f150-438c-a0fd-02832397c9ad" data-section-id="c23d022b-f150-438c-a0fd-02832397c9ad">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-white py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-primary-800">Frequently Asked Questions</h2>
-            <div class="max-w-3xl mx-auto">
-                <div class="space-y-6">
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">What is AI with Roy?</h3>
-                        <p class="text-gray-600">AI with Roy is a comprehensive learning platform that provides resources, courses, and community support for aspiring AI engineers. Our goal is to help you master artificial intelligence concepts and techniques.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">Do I need prior programming experience?</h3>
-                        <p class="text-gray-600">While some programming experience is beneficial, we offer courses for beginners as well. Our Introduction to Python for AI course is a great starting point for those new to programming.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">Are the courses self-paced?</h3>
-                        <p class="text-gray-600">Yes, all our courses are self-paced. You can learn at your own speed and revisit the materials as often as you need.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">Do you offer job placement assistance?</h3>
-                        <p class="text-gray-600">While we don't offer direct job placement, our career resources section provides guidance on building your portfolio, preparing for interviews, and networking in the AI industry.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">Can I get a certificate after completing a course?</h3>
-                        <p class="text-gray-600">Yes, upon successful completion of each course, you'll receive a digital certificate that you can share on your resume or LinkedIn profile.</p>
-                    </div>
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-primary-700 mb-2">How can I join the AI community?</h3>
-                        <p class="text-gray-600">You can join our AI community by signing up on our website. This will give you access to our forums, weekly challenges, and virtual meetups.</p>
-                    </div>
-                </div>
-                <div class="text-center mt-12">
-                    <p class="text-gray-600 mb-4">Didn't find the answer you were looking for?</p>
-                    <a href="#" class="inline-block bg-primary-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-primary-700 transition duration-300">Contact Support</a>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="c45c0723-99cd-4247-a1d3-903d94625288" data-section-id="c45c0723-99cd-4247-a1d3-903d94625288">
-
-<htmlCode>
-<div id="root">
-    <section class="bg-primary-800 py-16">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl font-bold mb-4 text-white">Stay Updated with AI Insights</h2>
-                <p class="text-lg mb-8 text-primary-100">Subscribe to our newsletter and get the latest AI trends, tutorials, and resources delivered straight to your inbox.</p>
-                <form class="max-w-md mx-auto">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <input type="email" placeholder="Enter your email address" class="flex-grow px-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-800" required>
-                        <button type="submit" class="bg-primary-600 text-white px-8 py-3 rounded-full hover:bg-primary-700 transition duration-300 font-semibold">Subscribe</button>
-                    </div>
-                </form>
-                <p class="mt-4 text-sm text-primary-200">We respect your privacy. Unsubscribe at any time.</p>
-            </div>
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-primary-700 rounded-lg p-6 text-center">
-                    <h3 class="text-xl font-semibold mb-2 text-white">Weekly AI News Roundup</h3>
-                    <p class="text-primary-100">Stay informed about the latest developments in the AI world.</p>
-                </div>
-                <div class="bg-primary-700 rounded-lg p-6 text-center">
-                    <h3 class="text-xl font-semibold mb-2 text-white">Exclusive Tutorials</h3>
-                    <p class="text-primary-100">Get access to subscriber-only tutorials and coding tips.</p>
-                </div>
-                <div class="bg-primary-700 rounded-lg p-6 text-center">
-                    <h3 class="text-xl font-semibold mb-2 text-white">AI Job Opportunities</h3>
-                    <p class="text-primary-100">Receive curated job listings in the AI and machine learning field.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-</htmlCode></element><element id="2be25d67-0b66-4a59-909a-8a289c144ff0" data-section-id="2be25d67-0b66-4a59-909a-8a289c144ff0">
-
-
-                <htmlcode>
-<div id="root" class="">
-    <footer class="bg-gray-900 text-white">
-        <div class="container mx-auto px-4 py-12 div-highlight">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-            <h3 class="text-xl font-semibold mb-4">AI with Roy</h3>
-            <p class="text-gray-400">Empowering the next generation of AI engineers with comprehensive resources and community support.</p>
-        </div>
-        <div>
-            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul class="space-y-2">
-                <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Home</a></li>
-                <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Courses</a></li>
-                <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Resources</a></li>
-                <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Community</a></li>
-                <li><a href="#" class="text-gray-400 hover:text-white transition duration-300">Blog</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 class="text-lg font-semibold mb-4">Connect</h4>
-            <ul class="space-y-2">
-                <li><a href="mailto:aiwithroy@gmail.com" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>Email</a></li>
-                <li><a href="https://x.com/aiwithroy" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>Twitter</a></li>
-                <li><a href="https://www.instagram.com/aiwithroy/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>Instagram</a></li>
-                <li><a href="https://www.youtube.com/@aiwroy" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>YouTube</a></li>
-                <li><a href="https://www.linkedin.com/company/aiwithroy/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>LinkedIn</a></li>
-                <li><a href="https://aiwithroy.substack.com/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition duration-300 flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path></svg>Substack</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
-            <p class="text-gray-400 mb-2">Email: aiwithroy@gmail.com</p>
-            <p class="text-gray-400 mb-2">Phone: +1 (555) 123-4567</p>
-            <p class="text-gray-400">Address: 123 AI Street, Tech City, 12345</p>
-        </div>
-    </div>
-    <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-        <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2023 AI with Roy. All rights reserved.</p>
-        <div class="flex space-x-4">
-            <a href="#" class="text-gray-400 hover:text-white transition duration-300">Privacy Policy</a>
-            <a href="#" class="text-gray-400 hover:text-white transition duration-300">Terms of Service</a>
-            <a href="#" class="text-gray-400 hover:text-white transition duration-300">Cookie Policy</a>
-        </div>
-    </div>
-</div>
-    </footer>
-</div>
-</htmlcode>
-              </element>
-                    <div id="page_complete">
-                    <script>
-                        console.log('Page complete');
-                    </script>
-                    </body>
-                    </html>
-                
+</body>
+</html>
