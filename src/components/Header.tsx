@@ -33,18 +33,17 @@ const Header = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-3 py-2 text-sm font-medium transition-colors hover:text-foreground ${
-                location.pathname === link.to
+              className={`px-3 py-2 text-sm font-medium transition-colors hover:text-foreground ${location.pathname === link.to
                   ? "text-foreground"
                   : "text-muted-foreground"
-              }`}
+                }`}
             >
               {link.label}
             </Link>
           ))}
 
           <a
-            href="/resume.pdf"
+            href="/souvik-roy-resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -105,17 +104,16 @@ const Header = () => {
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted ${
-                  location.pathname === link.to
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted ${location.pathname === link.to
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground"
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
             ))}
             <a
-              href="/resume.pdf"
+              href="/souvik-roy-resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted"
